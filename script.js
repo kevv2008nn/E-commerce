@@ -1,44 +1,44 @@
-let cart = [];
-let total = 0;
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// add product
 function addToCart(name, price){
-
-    cart.push(name);
-    total = total + price;
-
-    document.getElementById("cart-count").innerText = cart.length;
-
-    alert(name + " added to cart");
+cart.push({name,price});
+localStorage.setItem("cart", JSON.stringify(cart));
+updateCartCount();
+alert("Added to cart");
 }
 
-// show cart items
-function loadCart(){
-
-    let box = document.getElementById("cart-items");
-
-    if(!box) return;
-
-    box.innerHTML = "";
-
-    box.innerHTML = box.innerHTML + cart.join("<br>");
-
-    document.getElementById("total").innerText = "Total: ₹" + total;
+function updateCartCount(){
+let count=document.getElementById("cart-count");
+if(count){
+count.innerText=cart.length;
+}
 }
 
-// buy function
+function displayCart(){
+let items=document.getElementById("cart-items");
+let total=document.getElementById("total");
+
+if(!items) return;
+
+items.innerHTML="";
+let sum=0;
+
+cart.forEach(item=>{
+let div=document.createElement("div");
+div.innerText=item.name+" - ₹"+item.price;
+items.appendChild(div);
+sum+=item.price;
+});
+
+total.innerText="Total: ₹"+sum;
+}
+
 function buyNow(){
-
-    if(cart.length == 0){
-        alert("Cart is empty");
-        return;
-    }
-
-    alert("Order successful!");
-
-    cart = [];
-    total = 0;
-
-    loadCart();
-
+alert("Order placed!");
+cart=[];
+localStorage.removeItem("cart");
+location.reload();
 }
+
+updateCartCount();
+displayCart();
